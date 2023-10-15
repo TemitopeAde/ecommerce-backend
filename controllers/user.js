@@ -179,7 +179,7 @@ export const stripeWebHooks = async (req, res) => {
       const checkoutSessionAsyncPaymentSucceeded = event.data.object;
       // Then define and call a function to handle the event checkout.session.async_payment_succeeded
 
-      console.log("Payment successful")
+      console.log("Payment successful", checkoutSessionAsyncPaymentSucceeded)
       break;
     case 'checkout.session.completed':
       const checkoutSessionCompleted = event.data.object;
