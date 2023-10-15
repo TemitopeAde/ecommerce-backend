@@ -163,6 +163,7 @@ export const stripeWebHooks = async (req, res) => {
     console.log(event, "EVENT");
     res.status(200).json({ event })
   } catch (err) {
+    console.log(event, "EVENT_ERROR");
     res.status(400).send(`Webhook Error: ${err.message}`);
     return;
   }
