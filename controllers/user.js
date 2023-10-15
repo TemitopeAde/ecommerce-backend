@@ -170,6 +170,32 @@ export const stripeWebHooks = async (req, res) => {
     return;
   }
 
+  switch (event.type) {
+    case 'checkout.session.async_payment_failed':
+      const checkoutSessionAsyncPaymentFailed = event.data.object;
+      // Then define and call a function to handle the event checkout.session.async_payment_failed
+      break;
+    case 'checkout.session.async_payment_succeeded':
+      const checkoutSessionAsyncPaymentSucceeded = event.data.object;
+      // Then define and call a function to handle the event checkout.session.async_payment_succeeded
+
+      console.log("Payment successful")
+      break;
+    case 'checkout.session.completed':
+      const checkoutSessionCompleted = event.data.object;
+      console.log("Session successful")
+      // Then define and call a function to handle the event checkout.session.completed
+      break;
+    case 'checkout.session.expired':
+      const checkoutSessionExpired = event.data.object;
+      console.log("Session expired")
+      // Then define and call a function to handle the event checkout.session.expired
+      break;
+    // ... handle other event types
+    default:
+      console.log(`Unhandled event type ${event.type}`);
+  }
+
   // Handle the event
   console.log(`Unhandled event type ${event.type}`);
 
