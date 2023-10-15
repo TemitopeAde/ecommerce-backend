@@ -153,15 +153,19 @@ export const stripePayment = async (req, res) => {
 }
 
 export const stripeWebHooks = async (req, res) => {
-  console.log(req);
+  console.log(req.headers);
+  // This is your Stripe CLI webhook secret for testing your endpoint locally.
+  const endpointSecret = "whsec_50b9a16d6ade42be34c86486b175e9b9d0ff3caf5c822738c211b820396566e8";
+
   const sig = req.headers['stripe-signature'];
 
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+    event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+    res.status(200).json({ event })
   } catch (err) {
-    response.status(400).send(`Webhook Error: ${err.message}`);
+    res.status(400).send(`Webhook Error: ${err.message}`);
     return;
   }
 
@@ -169,5 +173,5 @@ export const stripeWebHooks = async (req, res) => {
   console.log(`Unhandled event type ${event.type}`);
 
   // Return a 200 response to acknowledge receipt of the event
-  response.send();
+  res.send();
 }
