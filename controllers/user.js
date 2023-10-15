@@ -4,7 +4,7 @@ import user from '../models/userModel.js';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import Stripe from 'stripe';
-import { log } from 'console';
+
 
 // import * as Stripe from 'stripe';
 const stripe = new Stripe('sk_test_qXbPhV8fGIj4juj8EqGUdpnr00mm7DwYIt');
@@ -154,9 +154,11 @@ export const stripePayment = async (req, res) => {
 
 export const stripeWebHooks = async (req, res) => {
   // This is your Stripe CLI webhook secret for testing your endpoint locally.
-  const endpointSecret = "whsec_50b9a16d6ade42be34c86486b175e9b9d0ff3caf5c822738c211b820396566e8";
+  const endpointSecret = "whsec_vfMTAGHu3AHQrMWlp3OTPZbe1jGSDZcE";
   const sig = req.headers['stripe-signature'];
   let event;
+
+  console.log(req.body, sig, endpointSecret);
 
   try {
     event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
