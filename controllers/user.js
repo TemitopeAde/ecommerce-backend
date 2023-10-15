@@ -148,6 +148,26 @@ export const stripePayment = async (req, res) => {
 
     res.status(200).json({ url: session.url })
   } catch (error) {
-    res.status(400).json({ "message": "Bad request", error: error})
+    res.status(400).json({ "message": "Bad request", error: error })
   }
+}
+
+export const stripeWebHooks = async (req, res) => {
+  console.log(req);
+  const sig = req.headers['stripe-signature'];
+
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+  } catch (err) {
+    response.status(400).send(`Webhook Error: ${err.message}`);
+    return;
+  }
+
+  // Handle the event
+  console.log(`Unhandled event type ${event.type}`);
+
+  // Return a 200 response to acknowledge receipt of the event
+  response.send();
 }
