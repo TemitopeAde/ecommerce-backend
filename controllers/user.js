@@ -118,32 +118,36 @@ export const forgetPasswordController = async (req, res) => {
 
 export const stripePayment = async (req, res) => {
 
-  const { cartItems } = req.body;
+  try {
+    const { cartItems } = req.body;
 
-  const line_items = cartItems?.map((item) => {
-    return {
-      price_data: {
-        currency: 'usd',
-        product_data: {
-          name: item.name,
+    const line_items = cartItems?.map((item) => {
+      return {
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: item.name,
+          },
+          unit_amount: Math.floor(item.list_price * 100),
         },
-        unit_amount: Math.floor(item.list_price * 100),
-      },
-      quantity: item.quantity,
-    }
-  })
-  
+        quantity: item.quantity,
+      }
+    })
 
-  // console.log(cartItems);
-  const session = await stripe.checkout.sessions.create({
-    line_items,
-    phone_number_collection: {
-      enabled: true
-    },
-    mode: 'payment',
-    success_url: 'https://jolly-gaufre-7c3881.netlify.app/payment-success',
-    cancel_url: 'https://jolly-gaufre-7c3881.netlify.app/payment-failed',
-  });
-  
-  res.status(200).json({ url: session.url })
+
+    // console.log(cartItems);
+    const session = await stripe.checkout.sessions.create({
+      line_items,
+      phone_number_collection: {
+        enabled: true
+      },
+      mode: 'payment',
+      success_url: 'https://jolly-gaufre-7c3881.netlify.app/payment-success',
+      cancel_url: 'https://jolly-gaufre-7c3881.netlify.app/payment-failed',
+    });
+
+    res.status(200).json({ url: session.url })
+  } catch (error) {
+    res.status(400).json({ "message": "Bad request", error: error})
+  }
 }
