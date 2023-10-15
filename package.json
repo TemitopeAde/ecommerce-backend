@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/TemitopeAde/Ecommerce#readme",
   "dependencies": {
-    "axios": "^1.5.0",
+    "axios": "^1.5.1",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "cloudinary": "^1.40.0",
@@ -32,8 +32,10 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.5.0",
     "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.6",
     "nodemon": "^3.0.1",
     "sharp": "^0.32.6",
+    "stripe": "^13.10.0",
     "validator": "^13.11.0"
   }
 }

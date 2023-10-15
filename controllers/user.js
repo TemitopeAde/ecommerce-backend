@@ -1,11 +1,18 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import user from '../models/userModel.js';
+import crypto from 'crypto';
+import nodemailer from 'nodemailer';
+import Stripe from 'stripe';
+import { log } from 'console';
+
+// import * as Stripe from 'stripe';
+const stripe = new Stripe('sk_test_qXbPhV8fGIj4juj8EqGUdpnr00mm7DwYIt');
 
 
 export const signin = async (req, res) => {
   const { email, password } = req.body;
-  console.log(req.body);
+  console.log(email);
   const existingUser = await user.findOne({ email })
   if (!existingUser) return res.status(404).json({ message: "User doesn't exist" })
   const isPasswordCorrect = await bcrypt.compare(password, existingUser.password)
@@ -31,6 +38,110 @@ export const signup = async (req, res) => {
   if (!result) return res.status(400).json({ message: "User not created" })
   const token = jwt.sign({ email: result.email, id: result._id }, "test", { expiresIn: "1h" })
   res.status(200).json({ token, result })
+}
 
 
+export const resetPasswordController = async (req, res) => {
+  const { newPassword } = req.body;
+  const { token } = req.params;
+
+  try {
+    // Find the user with the provided token and check if it's not expired
+    const updatedUser = await user.findOneAndUpdate(
+      {
+        resetPasswordToken: token,
+        resetTokenExpire: { $gt: Date.now() },
+      },
+      { $set: { password: await bcrypt.hash(newPassword, 10) } }, // Hash the new password
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(400).json({ message: 'Insvalid user or expired token' });
+    }
+
+    res.status(200).json({ message: 'Password reset successful' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Password reset failed' });
+  }
+}
+
+
+export const forgetPasswordController = async (req, res) => {
+
+  const { email } = req.body;
+
+  try {
+    // Generate a unique token and set expiration time (e.g., 1 hour)
+    const token = crypto.randomBytes(20).toString('hex');
+    const tokenExpiration = Date.now() + 3600000; // 1 hour
+
+    // Find the user by email
+    const foundUser = await user.findOne({ email });
+
+    if (!foundUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Update the user's resetToken and resetTokenExpires in the database
+    foundUser.resetPasswordToken = token;
+    foundUser.resetTokenExpire = tokenExpiration;
+    await foundUser.save();
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'adesiyantope2014@gmail.com',
+        pass: 'vkpi aztq xuef kclg',
+      },
+    });
+
+    // Send a password reset email with the token
+    const mailOptions = {
+      from: 'adesiyantope2014@gmail.com',
+      to: email,
+      subject: 'Password Reset',
+      text: `Click on the following link to reset your password: http://localhost:3000/reset-password/${token}`,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).json({ message: `Password reset email sent to ${email}` });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error sending email' });
+  }
+}
+
+
+
+
+export const stripePayment = async (req, res) => {
+
+  const { cartItems } = req.body;
+
+  const line_items = cartItems?.map((item) => {
+    return {
+      price_data: {
+        currency: 'usd',
+        product_data: {
+          name: item.name,
+        },
+        unit_amount: Math.floor(item.list_price * 100),
+      },
+      quantity: item.quantity,
+    }
+  })
+  // console.log(line_items);
+
+  // console.log(cartItems);
+  const session = await stripe.checkout.sessions.create({
+    line_items,
+    mode: 'payment',
+    success_url: 'https://jolly-gaufre-7c3881.netlify.app/payment-success',
+    cancel_url: 'https://jolly-gaufre-7c3881.netlify.app/payment-failed',
+  });
+
+  res.status(200).json({ url: session.url })
 }

@@ -11,6 +11,8 @@ import auth from './middlewares/auth.js';
 import cors from 'cors';
 
 
+
+
 const app = express();
 dotenv.config();
 
@@ -19,15 +21,18 @@ app.use(cors());
 
 app.use(express.json())
 app.use(cookieParser())
-app.use(bodyParser.urlencoded({ extended: true}))
+app.use(bodyParser.urlencoded({ extended: true }))
+
+
 
 // NOT FOUND MIDDLEWARE
 // app.use('*', (req, res) => {
 //   res.status(404).json({ msg: 'not found' })
 // });
-  
-app.use("/api/v1/products", productRouter) // add auth
+
+app.use("/products", productRouter) // add auth
 app.use("/api/v1/users", userRouter);
+
 
 cloudinary.config({
   cloud_name: "df04essjr",
