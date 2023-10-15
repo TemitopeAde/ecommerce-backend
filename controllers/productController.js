@@ -3,8 +3,6 @@ import axios from 'axios';
 
 
 
-
-
 export const getAllProducts = async (req, res) => {
   try {
     const response = await axios.get('https://api.wps-inc.com/items', {

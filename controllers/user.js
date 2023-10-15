@@ -24,7 +24,6 @@ export const signin = async (req, res) => {
 
 }
 
-
 export const signup = async (req, res) => {
   const { email, password, confirmPassword, name } = req.body;
   console.log(req.body);
@@ -92,14 +91,14 @@ export const forgetPasswordController = async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'adesiyantope2014@gmail.com',
+        user: '',
         pass: 'vkpi aztq xuef kclg',
       },
     });
 
     // Send a password reset email with the token
     const mailOptions = {
-      from: 'adesiyantope2014@gmail.com',
+      from: '',
       to: email,
       subject: 'Password Reset',
       text: `Click on the following link to reset your password: http://localhost:3000/reset-password/${token}`,
@@ -133,15 +132,18 @@ export const stripePayment = async (req, res) => {
       quantity: item.quantity,
     }
   })
-  // console.log(line_items);
+  
 
   // console.log(cartItems);
   const session = await stripe.checkout.sessions.create({
     line_items,
+    phone_number_collection: {
+      enabled: true
+    },
     mode: 'payment',
     success_url: 'https://jolly-gaufre-7c3881.netlify.app/payment-success',
     cancel_url: 'https://jolly-gaufre-7c3881.netlify.app/payment-failed',
   });
-
+  
   res.status(200).json({ url: session.url })
 }
