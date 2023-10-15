@@ -142,8 +142,8 @@ export const stripePayment = async (req, res) => {
         enabled: true
       },
       mode: 'payment',
-      success_url: 'https://jolly-gaufre-7c3881.netlify.app/payment-success',
-      cancel_url: 'https://jolly-gaufre-7c3881.netlify.app/payment-failed',
+      success_url: 'https://willowy-donut-92f009.netlify.app/payment-success',
+      cancel_url: 'https://willowy-donut-92f009.netlify.app/payment-failed',
     });
 
     res.status(200).json({ url: session.url })
