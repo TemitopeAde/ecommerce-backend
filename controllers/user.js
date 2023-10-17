@@ -156,7 +156,7 @@ export const stripeWebHooks = async (req, res) => {
   const endpointSecret = "whsec_50b9a16d6ade42be34c86486b175e9b9d0ff3caf5c822738c211b820396566e8";
   const sig = req.headers['stripe-signature']
 
-  console.log(sig);
+  // console.log(sig);
  
 
 
@@ -167,8 +167,8 @@ export const stripeWebHooks = async (req, res) => {
   //console.log(rawBody)
 
   try {
-    // event = stripe.webhooks.constructEvent(rawBody, sig, endpointSecret);
-    // console.log(event.type, "EVENT")
+    event = stripe.webhooks.constructEvent(rawBody, sig, endpointSecret);
+    console.log(event.type, "EVENT")
 
     // Rest of your event handling code...
 
