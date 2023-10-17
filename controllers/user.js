@@ -4,7 +4,7 @@ import user from '../models/userModel.js';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import Stripe from 'stripe';
-
+import { Buffer } from 'buffer';
 
 // import * as Stripe from 'stripe';
 const stripe = new Stripe('sk_test_qXbPhV8fGIj4juj8EqGUdpnr00mm7DwYIt');
@@ -114,8 +114,6 @@ export const forgetPasswordController = async (req, res) => {
 }
 
 
-
-
 export const stripePayment = async (req, res) => {
 
   try {
@@ -152,53 +150,103 @@ export const stripePayment = async (req, res) => {
   }
 }
 
+
 export const stripeWebHooks = async (req, res) => {
   // This is your Stripe CLI webhook secret for testing your endpoint locally.
-  const endpointSecret = "whsec_vfMTAGHu3AHQrMWlp3OTPZbe1jGSDZcE";
-  const sig = req.headers['stripe-signature'];
-  let event;
+  const endpointSecret = "whsec_50b9a16d6ade42be34c86486b175e9b9d0ff3caf5c822738c211b820396566e8";
+  const sig = req.headers['stripe-signature']
 
-  // console.log(req.body, sig, endpointSecret);
+  console.log(sig);
+ 
+
+
+ 
+ // console.log(obj)
+  let event;
+  const rawBody = JSON.stringify(req.body)
+  //console.log(rawBody)
 
   try {
-    event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-    // console.log(event, "EVENT");
-    res.status(200).json({ event })
+    // event = stripe.webhooks.constructEvent(rawBody, sig, endpointSecret);
+    // console.log(event.type, "EVENT")
+
+    // Rest of your event handling code...
+
+    // Return a 200 response to acknowledge receipt of the event
+    res.send();
   } catch (err) {
-    // console.log(event, "EVENT_ERROR");
+    console.error(err);
     res.status(400).send(`Webhook Error: ${err.message}`);
-    return;
   }
-
-  switch (event.type) {
-    case 'checkout.session.async_payment_failed':
-      const checkoutSessionAsyncPaymentFailed = event.data.object;
-      // Then define and call a function to handle the event checkout.session.async_payment_failed
-      break;
-    case 'checkout.session.async_payment_succeeded':
-      const checkoutSessionAsyncPaymentSucceeded = event.data.object;
-      // Then define and call a function to handle the event checkout.session.async_payment_succeeded
-
-      console.log("Payment successful", checkoutSessionAsyncPaymentSucceeded)
-      break;
-    case 'checkout.session.completed':
-      const checkoutSessionCompleted = event.data.object;
-      console.log("Session successful")
-      // Then define and call a function to handle the event checkout.session.completed
-      break;
-    case 'checkout.session.expired':
-      const checkoutSessionExpired = event.data.object;
-      console.log("Session expired")
-      // Then define and call a function to handle the event checkout.session.expired
-      break;
-    // ... handle other event types
-    default:
-      console.log(`Unhandled event type ${event.type}`);
-  }
-
-  // Handle the event
-  console.log(`Unhandled event type ${event.type}`);
-
-  // Return a 200 response to acknowledge receipt of the event
-  res.send();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// export const stripeWebHooks = async (req, res) => {
+//   // This is your Stripe CLI webhook secret for testing your endpoint locally.
+//   const endpointSecret = "whsec_50b9a16d6ade42be34c86486b175e9b9d0ff3caf5c822738c211b820396566e8";
+//   const sig = req.headers['stripe-signature'];
+//   let event;
+
+//   console.log(req.body.data.object);
+
+//   try {
+//     event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+//     console.log(event.type, "EVENT");
+    
+//     switch (event.type) {
+//       case 'checkout.session.async_payment_failed':
+//         const checkoutSessionAsyncPaymentFailed = event.data.object;
+//         // Then define and call a function to handle the event checkout.session.async_payment_failed
+//         break;
+//       case 'checkout.session.async_payment_succeeded':
+//         const checkoutSessionAsyncPaymentSucceeded = event.data.object;
+//         // Then define and call a function to handle the event checkout.session.async_payment_succeeded
+
+//         console.log("Payment successful", checkoutSessionAsyncPaymentSucceeded)
+//         break;
+//       case 'checkout.session.completed':
+//         const checkoutSessionCompleted = event.data.object;
+//         console.log("Session successful")
+//         // Then define and call a function to handle the event checkout.session.completed
+//         break;
+//       case 'checkout.session.expired':
+//         const checkoutSessionExpired = event.data.object;
+//         console.log("Session expired")
+//         // Then define and call a function to handle the event checkout.session.expired
+//         break;
+//       // ... handle other event types
+//       default:
+//         console.log(`Unhandled event type ${event.type}`);
+//     }
+
+//     // res.status(200).json({ event })
+//   } catch (err) {
+//     // console.log(event, "EVENT_ERROR");
+//     res.status(400).send(`Webhook Error: ${err.message}`);
+//     return;
+//   }
+
+
+
+//   // Handle the event
+//   console.log(`Unhandled event type ${event.type}`);
+
+//   // Return a 200 response to acknowledge receipt of the event
+//   res.send();
+// }
+
+
+
