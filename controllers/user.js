@@ -5,6 +5,7 @@ import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import Stripe from 'stripe';
 import { Buffer } from 'buffer';
+import { log } from 'console';
 
 // import * as Stripe from 'stripe';
 const stripe = new Stripe('sk_test_qXbPhV8fGIj4juj8EqGUdpnr00mm7DwYIt');
@@ -150,34 +151,8 @@ export const stripePayment = async (req, res) => {
   }
 }
 
-
 export const stripeWebHooks = async (req, res) => {
-  // This is your Stripe CLI webhook secret for testing your endpoint locally.
-  const endpointSecret = "whsec_50b9a16d6ade42be34c86486b175e9b9d0ff3caf5c822738c211b820396566e8";
-  const sig = req.headers['stripe-signature']
-
-  // console.log(sig);
- 
-
-
- 
- // console.log(obj)
-  let event;
-  const rawBody = JSON.stringify(req.body)
-  //console.log(rawBody)
-
-  try {
-    event = stripe.webhooks.constructEvent(rawBody, sig, endpointSecret);
-    console.log(event.type, "EVENT")
-
-    // Rest of your event handling code...
-
-    // Return a 200 response to acknowledge receipt of the event
-    res.send();
-  } catch (err) {
-    console.error(err);
-    res.status(400).send(`Webhook Error: ${err.message}`);
-  }
+  console.log(req.body)
 }
 
 
